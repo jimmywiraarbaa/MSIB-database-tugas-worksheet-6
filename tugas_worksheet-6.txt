@@ -1,0 +1,113 @@
+SOAL 6.1
+
+NOMOR 1
+
+MariaDB [sib_database]> CREATE PROCEDURE pro_naikan_harga (
+    ->     IN p_jenis_produk_id INT,
+    ->     IN p_persentase_kenaikan DECIMAL(5, 2)
+    -> )
+    -> BEGIN
+    ->     -- Update harga_jual produk berdasarkan jenis produk dan persentase kenaikan harga
+    ->     UPDATE produk
+    ->     SET harga_jual = harga_jual * (1 + p_persentase_kenaikan / 100)
+    ->     WHERE jenis_produk_id = p_jenis_produk_id;
+    -> END $$
+Query OK, 0 rows affected (0.005 sec)
+
+MariaDB [sib_database]>
+MariaDB [sib_database]> DELIMITER ;
+
+NOMOR 2
+
+MariaDB [sib_database]> CREATE FUNCTION umur(tgl_lahir DATE)
+    -> RETURNS INT
+    -> BEGIN
+    ->     DECLARE v_umur INT;
+    ->
+    ->     SET v_umur = YEAR(CURDATE()) - YEAR(tgl_lahir);
+    ->
+    ->     RETURN v_umur;
+    -> END $$
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [sib_database]>
+MariaDB [sib_database]> DELIMITER ;
+
+MariaDB [sib_database]> SELECT nama, umur(tgl_lahir) AS umur FROM pelanggan;
++--------------------+------+
+| nama               | umur |
++--------------------+------+
+| Agung Sedayu Group |   14 |
+| Pandan Wangi       |   74 |
+| Sekar Mirah        |   41 |
+| Swandaru Geni      |   43 |
+| Pradabashu         |   39 |
+| Gayatri Dwi        |   37 |
+| Dewi Gyat          |   36 |
+| Andre Haru         |   34 |
+| Ahmad Hasan        |   32 |
+| Cassanndra         |   34 |
+| Andi Wijaya        |    1 |
+| Ira                |    1 |
++--------------------+------+
+12 rows in set (0.055 sec)
+
+
+NOMOR 3
+
+MariaDB [sib_database]> CREATE FUNCTION kategori_harga(harga DOUBLE)
+    -> RETURNS VARCHAR(20)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE kategori VARCHAR(20);
+    ->
+    ->     IF harga BETWEEN 0 AND 500000 THEN
+    ->         SET kategori = 'murah';
+    ->     ELSEIF harga > 500000 AND harga <= 3000000 THEN
+    ->         SET kategori = 'sedang';
+    ->     ELSEIF harga > 3000000 AND harga <= 10000000 THEN
+    ->         SET kategori = 'mahal';
+    ->     ELSEIF harga > 10000000 THEN
+    ->         SET kategori = 'sangat mahal';
+    ->     ELSE
+    ->         SET kategori = 'tidak diketahui'; -- Jika ada harga negatif atau nilai tak terduga
+    ->     END IF;
+    ->
+    ->     RETURN kategori;
+    -> END $$
+Query OK, 0 rows affected (0.085 sec)
+
+MariaDB [sib_database]>
+MariaDB [sib_database]> DELIMITER ;
+
+MariaDB [sib_database]> SELECT nama, harga_jual, kategori_harga(harga_jual) AS kategori FROM produk;
++-------------------+------------+--------------+
+| nama              | harga_jual | kategori     |
++-------------------+------------+--------------+
+| Televisi 21 inchs |   55802500 | sangat mahal |
+| Televisi 40 inch  |    8221200 | mahal        |
+| Kulkas 2 pintu    |    5171400 | mahal        |
+| Meja Makan        |     600000 | sedang       |
+| Teh Kotak         |       3500 | murah        |
+| PC Desktop HP     |    9984000 | mahal        |
+| Teh Botol         |       2500 | murah        |
+| Notebook Acer S   |   11232000 | sangat mahal |
+| Notebook Lenovo   |   12480000 | sangat mahal |
+| Laptop Lenovo     |   17680000 | sangat mahal |
+| Kopi              |      30000 | murah        |
+| Teh Sosro 2       |      16575 | murah        |
+| Laptop Asus       |    5525000 | mahal        |
+| Televisi 22 inc`  |   55802500 | sangat mahal |
+| Televisi 23 inc   |   55802500 | sangat mahal |
+| Televisi 24 inc   |   55802500 | sangat mahal |
+| Televisi 25 inc   |   55802500 | sangat mahal |
+| Televisi 27 inc   |   55802500 | sangat mahal |
+| Televisi 28 inc   |   55802500 | sangat mahal |
+| Televisi 29 inc   |   55802500 | sangat mahal |
+| Teh Pucuk         |       5000 | murah        |
+| Teh Pucuk2        |       5000 | murah        |
+| Mouse Gaming      |      15000 | murah        |
+| Keyboard Gaming   |      25000 | murah        |
+| Kursi Gaming      |      35000 | murah        |
++-------------------+------------+--------------+
+25 rows in set (0.001 sec)
